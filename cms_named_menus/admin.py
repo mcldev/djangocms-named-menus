@@ -1,7 +1,7 @@
 import json
 
 from django.utils.functional import Promise
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
@@ -20,7 +20,7 @@ class LazyEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, Promise):
-            return force_text(obj)
+            return force_str(obj)
         return obj
 
 
