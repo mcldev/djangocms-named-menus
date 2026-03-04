@@ -32,7 +32,7 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
-ROOT_URLCONF = 'cms_named_menus.test_urls'
+ROOT_URLCONF = 'tests.urls'
 
 LANGUAGE_CODE = 'en'
 
