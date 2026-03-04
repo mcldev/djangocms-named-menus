@@ -23,6 +23,12 @@ setup(
         'django-cms>=3.11,<3.12',
         'django-autoslug>=1.7.2',
     ],
+    extras_require={
+        'test': [
+            'djangocms-text-ckeditor>=5.1',
+            'django-sekizai>=4.0',
+        ],
+    },
     python_requires='>=3.9',
     package_data={
         'readme': ['README.md'],
