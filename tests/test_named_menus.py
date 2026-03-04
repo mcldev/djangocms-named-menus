@@ -82,9 +82,24 @@ class CMSNamedMenuModelTests(TestCase):
         self.assertEqual(menu.pages[0]['children'][0]['id'], 2)
 
     def test_unique_together_slug_site(self):
-        CMSNamedMenu.objects.create(name='Unique', site=self.site, pages=[])
-        with self.assertRaises(Exception):
-            CMSNamedMenu.objects.create(name='Unique', site=self.site, pages=[])
+        """Verify unique_together constraint on (slug, site)."""
+        from django.db import IntegrityError, connection
+        menu1 = CMSNamedMenu.objects.create(name='First', site=self.site, pages=[])
+        menu2 = CMSNamedMenu.objects.create(name='Second', site=self.site, pages=[])
+        # Bypass AutoSlugField by updating the slug directly in the database
+        with self.assertRaises(IntegrityError):
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE cms_named_menus_cmsnamedmenu SET slug = %s WHERE id = %s",
+                    [menu1.slug, menu2.id]
+                )
+
+    def test_auto_slug_deduplicates(self):
+        """AutoSlugField should append a suffix when name duplicates exist."""
+        CMSNamedMenu.objects.create(name='Dupe', site=self.site, pages=[])
+        menu2 = CMSNamedMenu.objects.create(name='Dupe', site=self.site, pages=[])
+        self.assertNotEqual(menu2.slug, 'dupe')
+        self.assertTrue(menu2.slug.startswith('dupe'))
 
     def test_meta_verbose_names(self):
         self.assertEqual(CMSNamedMenu._meta.verbose_name, 'CMS Menu')
@@ -420,11 +435,14 @@ class JSONFieldTests(TestCase):
         self.assertIsNone(menu.pages)
 
     def test_filter_by_json_content(self):
-        """Verify that Django's native JSONField supports contains lookups."""
+        """Verify that Django's native JSONField supports contains lookups.
+        Only works on PostgreSQL/MariaDB 10.2.3+, not SQLite."""
+        from django.db import connection
+        if connection.vendor == 'sqlite':
+            self.skipTest('SQLite does not support JSON contains lookups')
         CMSNamedMenu.objects.create(
             name='Searchable', site=self.site,
             pages=[{'id': 42, 'children': []}])
-        # This uses Django's JSONField lookup capabilities
         qs = CMSNamedMenu.objects.filter(pages__contains=[{'id': 42, 'children': []}])
         self.assertTrue(qs.exists())
 
