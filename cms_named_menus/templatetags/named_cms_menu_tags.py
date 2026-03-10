@@ -69,8 +69,8 @@ def convert_menu_to_draft_mode(menu):
     nodes = cache.flatten_menu(menu)
     published_page_ids = [a['id'] for a in nodes]
 
-    # Load all published pages
-    published_pages = Page.objects.filter(id__in=published_page_ids)
+    # Load all published pages with node relationship (prevent N+1)
+    published_pages = Page.objects.filter(id__in=published_page_ids).select_related('node')
 
     # Create a map from published id > draft id for draft mode
     page_map = {}
