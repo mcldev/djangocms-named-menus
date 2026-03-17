@@ -36,7 +36,7 @@
   /* margin-left: 5%; */
 }
 .pages aside ol li button {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
 }
