@@ -1,17 +1,16 @@
 {% load static i18n %}
 
-<link type="text/css" rel="stylesheet" href="{% static 'cmsnamedmenus/ext/jquery.nestable.min.css' %}"/>
-<link type="text/css" rel="stylesheet" href="{% static 'cmsnamedmenus/css/admin.min.css' %}"/>
+<link type="text/css" rel="stylesheet" href="{% static 'cmsnamedmenus/css/menu-builder.css' %}"/>
 
 {% if not line.fields|length_is:'1' and not field.is_readonly %}
 {{ field.errors }}
 {% endif %}
 
 {% if removed_nodes %}
-<div class="removed errornote ">
+<div class="removed-pages-notice">
     <h3>{% trans "Pages Removed - Save to update menu" %}</h3>
     <p>{% trans "The following Pages have been removed due to being deleted, unpublished, or hidden in navigation" %}</p>
-    <ul class="errorlist">
+    <ul>
         {% for removed in removed_nodes %}
         <li>{{ removed.title }}</li>
         {% endfor %}
@@ -33,106 +32,84 @@
 <p class="help">{{ field.field.help_text|safe }}</p>
 {% endif %}
 
-<section class="pages">
-
-    <div class="selected">
-        <h3>{% trans "Selected Pages" %}</h3>
-        <aside class="menu-pages dd">
-            {%if menu_pages %}
-            <ol class="dd-list">
-                {% for page in menu_pages %}
-                {% include 'cms_named_menus/nestable_item.html' %}
-                {% endfor %}
-            </ol>
-            {% endif %}
-        </aside>
+<div class="menu-builder-container">
+    <div class="menu-settings-row">
+        <input type="checkbox" name="include_child_items" id="include_child_items" aria-describedby="include_child_items_help" checked>
+        <label for="include_child_items">{% trans "Include Child Items?" %}</label>
+        <div class="help" id="include_child_items_help">{% trans "Include child items when moving parent node" %}</div>
     </div>
 
-    <div class="available">
-        <h3>{% trans "Available Pages" %}</h3>
-        <div class="checkbox-row">
-            <input type="checkbox" name="include_child_items" id="include_child_items" checked="">
-            <label class="vCheckboxLabel" for="include_child_items">{% trans "Include Child Items?" %}</label>
-            <div class="help">{% trans "Include child items when moving parent node" %}</div>
-            <br>
+    <div class="menu-builder-panels">
+        <!-- Selected Pages Panel -->
+        <div class="menu-panel">
+            <div class="menu-panel-header">
+                <h3>{% trans "Selected Pages" %}</h3>
+                <div class="menu-panel-header-row">
+                    <div class="menu-filter">
+                        <input type="search"
+                               placeholder="{% trans 'Filter selected pages...' %}"
+                               aria-label="{% trans 'Filter selected pages' %}">
+                        <button type="button" class="menu-filter-clear" aria-label="{% trans 'Clear filter' %}">&times;</button>
+                    </div>
+                    <div class="menu-panel-controls">
+                        <button type="button" class="menu-control-btn" data-action="expand-all">{% trans "Expand All" %}</button>
+                        <button type="button" class="menu-control-btn" data-action="collapse-all">{% trans "Collapse All" %}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-panel-body menu-pages">
+                {% if menu_pages %}
+                <ol class="menu-tree">
+                    {% for page in menu_pages %}
+                        {% include 'cms_named_menus/menu_item.html' %}
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <div class="menu-empty-state">
+                    <p>{% trans "No pages selected yet." %}</p>
+                    <p>{% trans "Drag pages from the 'Available Pages' panel to build your menu." %}</p>
+                </div>
+                {% endif %}
+            </div>
         </div>
 
-        <aside class="available-pages dd">
-            <ol class="dd-list">
-                {% for page in available_pages %}
-                {% include 'cms_named_menus/nestable_item.html' %}
-                {% endfor %}
-            </ol>
-        </aside>
+        <!-- Available Pages Panel -->
+        <div class="menu-panel">
+            <div class="menu-panel-header">
+                <h3>{% trans "Available Pages" %}</h3>
+                <div class="menu-panel-header-row">
+                    <div class="menu-filter">
+                        <input type="search"
+                               placeholder="{% trans 'Filter available pages...' %}"
+                               aria-label="{% trans 'Filter available pages' %}">
+                        <button type="button" class="menu-filter-clear" aria-label="{% trans 'Clear filter' %}">&times;</button>
+                    </div>
+                    <div class="menu-panel-controls">
+                        <button type="button" class="menu-control-btn" data-action="expand-all">{% trans "Expand All" %}</button>
+                        <button type="button" class="menu-control-btn" data-action="collapse-all">{% trans "Collapse All" %}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-panel-body available-pages">
+                {% if available_pages %}
+                <ol class="menu-tree">
+                    {% for page in available_pages %}
+                        {% include 'cms_named_menus/menu_item.html' %}
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <div class="menu-empty-state">
+                    <p>{% trans "No pages available." %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-</section>
+</div>
 
-
-<script src="{% static 'cmsnamedmenus/ext/jquery-3.3.1.min.js' %}"></script>
-<script src="{% static 'cmsnamedmenus/ext/jquery-ui.min.js' %}"></script>
-<script src="{% static 'cmsnamedmenus/ext/jquery.nestable.min.js' %}"></script>
-
+<script src="{% static 'cmsnamedmenus/js/sortable.min.js' %}"></script>
 <script>
-
-    var availablePages = {{ available_pages_json | safe }};
-
-    // Output the new menu pages on change
-    function get_data(l, e, p) {
-        set_data_from_menu();
-    }
-
-    function set_data_from_menu() {
-        var data = $('.menu-pages.dd').nestable('serialize');
-        $('#id_pages').val(JSON.stringify(data));
-    }
-
-    // Rebuild the original list of available pages - as this shouldn't change
-    function beforeDragStop(l, e, p) {
-        available_pages_options.json = availablePages;
-        $('.available-pages.dd').nestable('destroy').nestable(available_pages_options);
-    }
-
-    // Remove child elements on click-drag - if set
-    function onDragStart(l, e, p) {
-        if (!$('#include_child_items').is(":checked")) {
-            if (e[0].children.length > 1) {
-                for (i = 1; i < e[0].children.length; i++) {
-                    e[0].children[i].remove();
-                }
-            }
-        }
-    }
-
-    // Output the content for the available pages when they're rebuilt
-    function contentCallback(item) {
-        return item.content || '' ? item.content : '≡ ' + item.title;
-    }
-
-    // Standard options for each menu
-    options = {
-        scroll: true,
-        group: 1,
-        expandBtnHTML: '<button data-action="expand" type="button">+</button>',
-        collapseBtnHTML: '<button data-action="collapse" type="button">-</button>',
-        callback: get_data,
-        beforeDragStop: beforeDragStop,
-    };
-
-    // Options for selected menus
-    menu_pages_options = $.extend({}, options);
-
-    // Options for available pages
-    available_pages_options = $.extend({}, options);
-    available_pages_options.onDragStart = onDragStart;
-    available_pages_options.contentCallback = contentCallback;
-
-    // Build nestable menus
-    $('.menu-pages.dd').nestable(menu_pages_options);
-    $('.available-pages.dd').nestable(available_pages_options);
-
-    // Update the field value with actual menu_pages (i.e. if unavailable is removed)
-    $(window).on('load', function () {
-        set_data_from_menu();
-    });
-
+    // Pass available pages data to JavaScript
+    window.availablePagesData = {{ available_pages_json | safe }};
 </script>
+<script src="{% static 'cmsnamedmenus/js/menu-builder.js' %}"></script>
