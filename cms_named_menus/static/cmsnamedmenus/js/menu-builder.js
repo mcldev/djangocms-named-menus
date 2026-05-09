@@ -479,6 +479,8 @@ class MenuBuilder {
       this.hiddenField.value = JSON.stringify(data);
     }
 
+    this.selectedContainer.classList.toggle('has-items', data.length > 0);
+
     return data;
   }
 

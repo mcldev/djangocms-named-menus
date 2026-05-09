@@ -58,18 +58,20 @@
                 </div>
             </div>
             <div class="menu-panel-body menu-pages">
-                {% if menu_pages %}
-                <ol class="menu-tree">
-                    {% for page in menu_pages %}
-                        {% include 'cms_named_menus/menu_item.html' %}
-                    {% endfor %}
-                </ol>
-                {% else %}
+                 {% if not menu_pages %}
                 <div class="menu-empty-state">
                     <p>{% trans "No pages selected yet." %}</p>
                     <p>{% trans "Drag pages from the 'Available Pages' panel to build your menu." %}</p>
                 </div>
                 {% endif %}
+                <ol class="menu-tree">
+                {% if menu_pages %}
+                    {% for page in menu_pages %}
+                        {% include 'cms_named_menus/menu_item.html' %}
+                    {% endfor %}
+                {% endif %}
+                </ol>
+
             </div>
         </div>
 
