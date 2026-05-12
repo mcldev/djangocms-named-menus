@@ -55,10 +55,8 @@ def delete_many(menu_slugs, language=""):
 
 def delete_by_page_id(page_id=None):
     menu_slugs = []
-    # Will pick up any menu which already has the published page id - possibly.
-    filter_string='"id":{}'.format(page_id)
-    for menu in CMSNamedMenu.objects.filter(pages__contains=filter_string).all():
-        if contains_page(menu.pages, page_id):
+    for menu in CMSNamedMenu.objects.all():
+        if menu.pages and contains_page(menu.pages, page_id):
             menu_slugs.append(menu.slug)
 
     delete_many(menu_slugs)

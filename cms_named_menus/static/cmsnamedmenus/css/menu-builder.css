@@ -1,0 +1,503 @@
+/**
+ * Menu Builder Styles - Bootstrap 3 Compatible
+ * Clean interface with drag-and-drop and hierarchical level controls
+ */
+
+/* Container Layout */
+.menu-builder-container {
+  margin: 0;
+  padding: 15px 10px;
+  width: auto;
+  max-width: none;
+}
+
+.menu-builder-panels {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 15px 0;
+  margin: 0 -15px;
+}
+
+/* Panel Styles */
+.menu-panel {
+  display: table-cell;
+  width: 50%;
+  vertical-align: top;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
+
+.menu-panel-header {
+  background-color: #f5f5f5;
+  background-image: linear-gradient(to bottom, #fff 0, #e0e0e0 100%);
+  border-bottom: 1px solid #ddd;
+  padding: 10px 15px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-panel-header h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.menu-panel-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Search/Filter */
+.menu-filter {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.menu-filter input {
+  width: 100%;
+  height: 30px;
+  padding: 5px 30px 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.menu-filter input:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+}
+
+.menu-filter-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 18px;
+  line-height: 1;
+  display: none;
+}
+
+.menu-filter.has-value .menu-filter-clear {
+  display: block;
+}
+
+.menu-filter-clear:hover {
+  color: #333;
+}
+
+/* Panel Controls */
+.menu-panel-controls {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.menu-control-btn {
+  display: inline-block;
+  padding: 3px 8px;
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: normal;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  color: #333;
+  transition: all 0.15s ease-in-out;
+}
+
+.menu-control-btn:hover {
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
+.menu-control-btn:active {
+  background-color: #d4d4d4;
+  border-color: #8c8c8c;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.15);
+}
+
+/* Panel Body */
+.menu-panel-body {
+  padding: 15px;
+  min-height: 600px;
+  height: 70vh;
+  max-height: 1200px;
+  overflow-y: auto;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+
+.menu-panel-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.menu-panel-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-left: 1px solid #ddd;
+}
+
+.menu-panel-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 5px;
+}
+
+.menu-panel-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Tree List */
+.menu-tree {
+  list-style: none;
+  margin: 0;
+  margin-left: 1.0em!important;
+  padding: 0;
+}
+
+/* Selected panel: tree fills the entire panel body so it remains a drop target when empty */
+.menu-pages {
+  position: relative;
+}
+
+.menu-pages > .menu-tree {
+  position: relative;
+  z-index: 1;
+  margin: 0 !important;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Empty-state placeholder sits behind the tree and never intercepts pointer events */
+.menu-pages > .menu-empty-state {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100px;
+}
+
+/* Once items are added, the empty-state placeholder is hidden */
+.menu-pages.has-items > .menu-empty-state {
+  display: none;
+}
+
+.menu-tree .menu-tree {
+  padding-left: 10px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  position: relative;
+}
+
+/* Indent guides */
+.menu-tree .menu-tree::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #ddd;
+}
+
+/* Tree Item */
+.menu-item {
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.menu-item-content {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 0;
+  transition: all 0.15s ease-in-out;
+  cursor: move;
+  position: relative;
+}
+
+.menu-item-content:hover {
+  border-color: #428bca;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.menu-item-content.dragging {
+  opacity: 0.4;
+}
+
+.menu-item-content.ghost {
+  opacity: 0.5;
+  background: #d9edf7;
+  border-color: #428bca;
+}
+
+/* Drag Handle - Darker, more visible */
+.menu-item-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 36px;
+  background: #5a5a5a;
+  background-image: linear-gradient(to bottom, #6a6a6a 0, #4a4a4a 100%);
+  border-right: 1px solid #ddd;
+  color: #fff;
+  cursor: move;
+  flex-shrink: 0;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  font-size: 16px;
+  user-select: none;
+  transition: background 0.15s ease-in-out;
+}
+
+.menu-item-handle:hover {
+  background: #3a3a3a;
+  background-image: linear-gradient(to bottom, #4a4a4a 0, #2a2a2a 100%);
+}
+
+.menu-item-handle::before {
+  content: "⋮⋮";
+  letter-spacing: -3px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+}
+
+/* Expand/Collapse Toggle - Minimal */
+.menu-item-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: auto;
+  margin: 0 4px 0 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1;
+  color: #666;
+  padding: 0;
+  font-family: monospace;
+}
+
+.menu-item-toggle:hover {
+  color: #428bca;
+}
+
+.menu-item-toggle::before {
+  content: "▼";
+  display: inline-block;
+}
+
+.menu-item-toggle.collapsed::before {
+  content: "▶";
+}
+
+.menu-item.no-children .menu-item-toggle {
+  display: none;
+}
+
+/* Item Title */
+.menu-item-title {
+  flex-grow: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #333;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-item-title mark {
+  background-color: #fcf8e3;
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: #8a6d3b;
+}
+
+/* Collapsed State */
+.menu-item.collapsed > .menu-tree {
+  display: none;
+}
+
+/* Filtered/Hidden State */
+.menu-item.filtered-hidden {
+  display: none;
+}
+
+/* Empty State */
+.menu-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 13px;
+}
+
+.menu-empty-state p {
+  margin: 5px 0;
+}
+
+/* Settings Row - Bootstrap 3 alert style */
+.menu-settings-row {
+  background-color: #fcf8e3;
+  border: 1px solid #faebcc;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 15px;
+  color: #8a6d3b;
+}
+
+.menu-settings-row input[type="checkbox"] {
+  margin: 0 5px 0 0;
+  vertical-align: middle;
+}
+
+.menu-settings-row label {
+  font-weight: 600;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.menu-settings-row .help {
+  margin: 5px 0 0 20px;
+  font-size: 12px;
+  color: #8a6d3b;
+  font-weight: normal;
+}
+
+/* Error/Warning Messages */
+.removed-pages-notice {
+  background-color: #fcf8e3;
+  border: 1px solid #faebcc;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  color: #8a6d3b;
+}
+
+.removed-pages-notice h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #8a6d3b;
+}
+
+.removed-pages-notice p {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+}
+
+.removed-pages-notice ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+/* Hide original textarea field */
+.field-pages textarea,
+.field-pages p.help {
+  display: none;
+}
+
+/* Ensure field container doesn't restrict width */
+.field-pages {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.field-pages .form-row {
+  max-width: none !important;
+}
+
+/* Make sure Django admin form doesn't restrict width */
+.form-row .field-pages {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .menu-builder-panels {
+    display: block;
+  }
+
+  .menu-panel {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .menu-builder-container {
+    margin-left: 0;
+  }
+}
+
+/* Smooth transitions */
+.menu-item > .menu-tree {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus states for accessibility */
+.menu-item-content:focus-within {
+  outline: 2px solid #428bca;
+  outline-offset: 2px;
+}
+
+.menu-control-btn:focus,
+.menu-item-toggle:focus,
+.menu-filter input:focus {
+  outline: 2px solid #428bca;
+  outline-offset: -2px;
+}
+
+/* Selected panel specific - allow hierarchical drag */
+.menu-pages .menu-item-content {
+  cursor: move;
+}
+
+/* Print Styles */
+@media print {
+  .menu-panel-header,
+  .menu-filter,
+  .menu-panel-controls,
+  .menu-item-handle,
+  .menu-item-toggle {
+    display: none;
+  }
+
+  .menu-panel {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

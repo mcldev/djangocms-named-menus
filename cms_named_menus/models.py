@@ -1,10 +1,8 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.sites.models import Site
 from autoslug.fields import AutoSlugField
-from jsonfield import JSONField
 from django.conf import settings
-import collections
 
 
 def get_current_site():
@@ -23,13 +21,10 @@ class CMSNamedMenu(models.Model):
     slug = AutoSlugField(always_update=False,
                          populate_from='name',
                          unique=True)
-    pages = JSONField(blank=True,
-                      null=True,
-                      load_kwargs={
-                          'object_hook': collections.OrderedDict
-                      },
-                      default=[])
-    
+    pages = models.JSONField(blank=True,
+                             null=True,
+                             default=list)
+
     site = models.ForeignKey(Site,
                              on_delete=models.CASCADE,
                              help_text=_('The site the menu is accessible at.'),
@@ -39,8 +34,6 @@ class CMSNamedMenu(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.__str__()
 
     class Meta:
         verbose_name = "CMS Menu"

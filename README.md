@@ -78,3 +78,41 @@ CMS_NAMED_MENUS_NAMESPACES = None
 ```python
 CMS_NAMED_MENUS_REMOVE_UNAVAILABLE_PAGES = True
 ```
+
+
+## Testing
+
+### Install test dependencies
+
+```bash
+pip install -e ".[test]"
+```
+
+This installs the package in editable mode along with test dependencies:
+- `djangocms-text-ckeditor`
+- `django-sekizai`
+
+### Run tests
+
+```bash
+python -m django test tests --settings=tests.settings
+```
+
+For verbose output:
+
+```bash
+python -m django test tests --settings=tests.settings -v 2
+```
+
+Tests use an in-memory SQLite database and cover:
+- Model creation, `__str__`, auto-slug generation, and JSONField storage
+- `unique_together` constraint on `(slug, site)` and AutoSlugField deduplication
+- Cache utilities (`flatten_menu`, `contains_page`, key formatting)
+- Cache operations (`set`, `get`, `delete`, `delete_many`)
+- Admin helpers (`get_all_available_ids`, `clean_menu`, `SimpleNode`, `LazyEncoder`)
+- Default settings values (`CACHE_DURATION`, `ALLOWED_NAMESPACES`)
+- Signal-based cache invalidation on menu save and delete
+- Admin views (changelist, add form, change form, site-filtered listing)
+- JSONField migration verification (store/retrieve list, empty list, null)
+
+> **Note:** The `test_filter_by_json_content` test is automatically skipped on SQLite as `contains` lookups require PostgreSQL or MariaDB 10.2.3+.

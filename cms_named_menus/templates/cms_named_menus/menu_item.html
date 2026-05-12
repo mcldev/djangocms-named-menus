@@ -1,0 +1,18 @@
+<li class="menu-item{% if not page.children %} no-children{% endif %}"
+    data-id="{{ page.id }}"
+    data-title="{{ page.title }}">
+    <div class="menu-item-content">
+        <div class="menu-item-handle" title="Drag to reorder"></div>
+        <button type="button"
+                class="menu-item-toggle {% if page.children %}expanded{% endif %}"
+                aria-label="Toggle children"></button>
+        <div class="menu-item-title">{{ page.title }}</div>
+    </div>
+    {% if page.children %}
+    <ol class="menu-tree">
+        {% for child in page.children %}
+            {% include 'cms_named_menus/menu_item.html' with page=child %}
+        {% endfor %}
+    </ol>
+    {% endif %}
+</li>
